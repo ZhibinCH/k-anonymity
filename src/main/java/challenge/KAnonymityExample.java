@@ -6,10 +6,13 @@ import java.nio.charset.StandardCharsets;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 
@@ -25,14 +28,15 @@ public class KAnonymityExample {
     
 	public static void main(String[] args) throws Exception {
 	// 1. Load data
-	//	DefaultData data = getDataManual();
-		Data data = getDataCSV();
+	//	DefaultData data = getDataManual(); // alternative 1.1
+		Data data = getDataCSV(); 			// alternative 1.2
 	// 2. Generalization
-	//  generalizeDataManual(data);
-		generalizeDataCSV(data);
+	//  generalizeDataManual(data); 		// alternative 2.1
+		generalizeDataCSV(data); 			// alternative 2.2
+		generalizeDataBuilder(data); 		// alternative 2.3
 	// 3. Define privacy models and transformation rules
 	// 4. Execute the anonymization algorithm
-		ARXResult result = runAnonymizer(data);
+		ARXResult result = runAnonymizer(data); // step 3 and 4
 	// 5. Access and compare data
 	// 6. Analyze re-identification risks
 	// 7. Store data	
@@ -84,6 +88,22 @@ public class KAnonymityExample {
         data.getDefinition().setAttributeType("age", Hierarchy.create(dataDirectory+inputHierarchyAge, StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", Hierarchy.create(dataDirectory+inputHierarchyGender, StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("zipcode", Hierarchy.create(dataDirectory+inputHierarchyZipcode, StandardCharsets.UTF_8, ';'));
+	}
+	
+	private static void generalizeDataBuilder(Data data) {
+		// Define hierarchies
+        HierarchyBuilderRedactionBased<?> builder1 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
+                                                                                           Order.RIGHT_TO_LEFT,
+                                                                                           ' ',
+                                                                                           '*');
+        HierarchyBuilderRedactionBased<?> builder2 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
+                                                                                           Order.RIGHT_TO_LEFT,
+                                                                                           ' ',
+                                                                                           '*');
+
+        data.getDefinition().setAttributeType("age", builder1);
+        data.getDefinition().setAttributeType("gender", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setAttributeType("zipcode", builder2);
 	}
 	
 	private static ARXResult runAnonymizer (Data data) throws IOException {
