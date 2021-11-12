@@ -19,7 +19,12 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
+import org.deidentifier.arx.risk.RiskModelHistogram;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
+import org.deidentifier.arx.risk.RiskModelSampleRisks;
+import org.deidentifier.arx.risk.RiskModelSampleUniqueness;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 
 
@@ -130,10 +135,12 @@ public class KAnonymityExample {
 	     analyzeAttributes(data.getHandle());
 	     System.out.println("\n - Output data");
 	     Helper.print(result.getOutput());
-
+	     analyzeResult(result.getOutput());
+	     
 	}
+	
 	/**
-     * Perform risk analysis
+     * Perform risk analysis for input
      * @param handle
      */
     private static void analyzeAttributes(DataHandle handle) {
@@ -144,9 +151,34 @@ public class KAnonymityExample {
             System.out.println("   * Distinction: " + risk.getDistinction() + ", Separation: " + risk.getSeparation() + ", Identifier: " + risk.getIdentifier());
         }
     }
+    
+    /**
+     * Perform risk estimate for result
+     * @param handle
+     */
+    private static void analyzeResult(DataHandle handle) {
+        
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelHistogram classes = builder.getEquivalenceClassModel();
+        RiskModelSampleRisks sampleReidentifiationRisk = builder.getSampleBasedReidentificationRisk();
+        RiskModelSampleUniqueness sampleUniqueness = builder.getSampleBasedUniquenessRisk();
+        RiskModelPopulationUniqueness populationUniqueness = builder.getPopulationBasedUniquenessRisk();
+        
+        System.out.println("\n - Risk estimates:");
+        System.out.println("   * Sample-based measures");
+        System.out.println("     + Average risk     : " + sampleReidentifiationRisk.getAverageRisk());
+        System.out.println("     + Lowest risk      : " + sampleReidentifiationRisk.getLowestRisk());
+        System.out.println("     + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByLowestRisk());
+        System.out.println("     + Highest risk     : " + sampleReidentifiationRisk.getHighestRisk());
+        System.out.println("     + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByHighestRisk());
+        System.out.println("     + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueRecords());
+        System.out.println("   * Population-based measures");
+        System.out.println("     + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
+    }
 	
 	private static void storeResult(ARXResult result) throws IOException {
-		System.out.print(" - Writing data...");
+		System.out.print("\n - Writing data...");
         result.getOutput(false).save(dataDirectory+outputCSV, ';');
         System.out.println("Done!");
         System.out.println("Result is saved: "+System.getProperty("user.dir")+dataDirectory+outputCSV);
