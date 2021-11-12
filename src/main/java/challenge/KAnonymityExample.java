@@ -27,19 +27,20 @@ public class KAnonymityExample {
     public static String inputHierarchyZipcode = "test_hierarchy_zipcode.csv";
     
 	public static void main(String[] args) throws Exception {
-	// 1. Load data
-	//	DefaultData data = getDataManual(); // alternative 1.1
-		Data data = getDataCSV(); 			// alternative 1.2
-	// 2. Generalization
-	//  generalizeDataManual(data); 		// alternative 2.1
-		generalizeDataCSV(data); 			// alternative 2.2
-		generalizeDataBuilder(data); 		// alternative 2.3
-	// 3. Define privacy models and transformation rules
-	// 4. Execute the anonymization algorithm
-		ARXResult result = runAnonymizer(data); // step 3 and 4
-	// 5. Access and compare data
-	// 6. Analyze re-identification risks
-	// 7. Store data	
+// 1. Load data
+//		DefaultData input = getDataManual(); // alternative 1.1
+		Data input = getDataCSV(); 			// alternative 1.2
+// 2. Generalization
+//	    generalizeDataManual(input); 		// alternative 2.1
+//		generalizeDataCSV(input); 			// alternative 2.2
+		generalizeDataBuilder(input); 		// alternative 2.3
+// 3. Define privacy models and transformation rules
+// 4. Execute the anonymization algorithm
+		ARXResult result = runAnonymizer(input); // step 3 and 4
+// 5. Access and compare data
+		compareData(input,result); // step 5
+// 6. Analyze re-identification risks
+// 7. Store data	
 		storeResult(result);
 	}
 	private static DefaultData getDataManual() {
@@ -116,9 +117,19 @@ public class KAnonymityExample {
         return result;
 	}
 	
+	private static void compareData (Data data, ARXResult result) {
+		 System.out.println("\n - Input data");
+	     Helper.print(data.getHandle());
+	     System.out.println("\n - Output data");
+	     Helper.print(result.getOutput());
+//	     System.out.println("\n - Quasi-identifiers sorted by risk:");
+//	     analyzeAttributes(data.getHandle());
+	}
+	
 	private static void storeResult(ARXResult result) throws IOException {
 		System.out.print(" - Writing data...");
         result.getOutput(false).save(dataDirectory+outputCSV, ';');
-        System.out.println("Done! Result is saved: "+System.getProperty("user.dir")+dataDirectory+outputCSV);
+        System.out.println("Done!");
+        System.out.println("Result is saved: "+System.getProperty("user.dir")+dataDirectory+outputCSV);
 	}
 }
