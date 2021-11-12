@@ -5,15 +5,21 @@ import java.nio.charset.StandardCharsets;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelAttributes;
+import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
 
 
 
@@ -120,11 +126,24 @@ public class KAnonymityExample {
 	private static void compareData (Data data, ARXResult result) {
 		 System.out.println("\n - Input data");
 	     Helper.print(data.getHandle());
+	     System.out.println("\n - Quasi-identifiers sorted by risk:");
+	     analyzeAttributes(data.getHandle());
 	     System.out.println("\n - Output data");
 	     Helper.print(result.getOutput());
-//	     System.out.println("\n - Quasi-identifiers sorted by risk:");
-//	     analyzeAttributes(data.getHandle());
+
 	}
+	/**
+     * Perform risk analysis
+     * @param handle
+     */
+    private static void analyzeAttributes(DataHandle handle) {
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelAttributes riskmodel = builder.getAttributeRisks();
+        for (QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
+            System.out.println("   * Distinction: " + risk.getDistinction() + ", Separation: " + risk.getSeparation() + ", Identifier: " + risk.getIdentifier());
+        }
+    }
 	
 	private static void storeResult(ARXResult result) throws IOException {
 		System.out.print(" - Writing data...");
