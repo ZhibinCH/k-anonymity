@@ -12,13 +12,24 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.KAnonymity;
 
+
+
 public class KAnonymityExample {
+	
+	public static String dataDirectory = "data/";
+    public static String inputCSV = "test.csv";
+    public static String outputCSV ="test_anonymized.csv";
+    public static String inputHierarchyAge = "test_hierarchy_age.csv";
+    public static String inputHierarchyGender = "test_hierarchy_gender.csv";
+    public static String inputHierarchyZipcode = "test_hierarchy_zipcode.csv";
+    
 	public static void main(String[] args) throws Exception {
 	// 1. Load data
-//		DefaultData data = getDataManual();
+	//	DefaultData data = getDataManual();
 		Data data = getDataCSV();
 	// 2. Generalization
-		generalizeData(data);
+	//  generalizeDataManual(data);
+		generalizeDataCSV(data);
 	// 3. Define privacy models and transformation rules
 	// 4. Execute the anonymization algorithm
 		ARXResult result = runAnonymizer(data);
@@ -41,11 +52,11 @@ public class KAnonymityExample {
 	}
 	
 	private static Data getDataCSV() throws IOException {
-		Data data = Data.create("data/test.csv", StandardCharsets.UTF_8, ';');
+		Data data = Data.create(dataDirectory+inputCSV, StandardCharsets.UTF_8, ';');
         return data;
 	}
 	
-	private static void generalizeData(Data data) {
+	private static void generalizeDataManual(Data data) {
 		// Define hierarchies
         DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
@@ -69,6 +80,12 @@ public class KAnonymityExample {
         data.getDefinition().setAttributeType("zipcode", zipcode);	
 	}
 	
+	private static void generalizeDataCSV(Data data) throws IOException {
+        data.getDefinition().setAttributeType("age", Hierarchy.create(dataDirectory+inputHierarchyAge, StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("gender", Hierarchy.create(dataDirectory+inputHierarchyGender, StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("zipcode", Hierarchy.create(dataDirectory+inputHierarchyZipcode, StandardCharsets.UTF_8, ';'));
+	}
+	
 	private static ARXResult runAnonymizer (Data data) throws IOException {
 		// Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -81,7 +98,7 @@ public class KAnonymityExample {
 	
 	private static void storeResult(ARXResult result) throws IOException {
 		System.out.print(" - Writing data...");
-        result.getOutput(false).save("data/test_anonymized.csv", ';');
-        System.out.println("Done! Result is saved: "+System.getProperty("user.dir")+"/data/test_anonymized.csv");
+        result.getOutput(false).save(dataDirectory+outputCSV, ';');
+        System.out.println("Done! Result is saved: "+System.getProperty("user.dir")+dataDirectory+outputCSV);
 	}
 }
