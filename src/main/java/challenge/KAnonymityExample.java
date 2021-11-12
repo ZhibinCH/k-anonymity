@@ -1,6 +1,7 @@
 package challenge;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -14,7 +15,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 public class KAnonymityExample {
 	public static void main(String[] args) throws Exception {
 	// 1. Load data
-		DefaultData data = getData();
+//		DefaultData data = getDataManual();
+		Data data = getDataCSV();
 	// 2. Generalization
 		generalizeData(data);
 	// 3. Define privacy models and transformation rules
@@ -25,7 +27,7 @@ public class KAnonymityExample {
 	// 7. Store data	
 		storeResult(result);
 	}
-	private static DefaultData getData() {
+	private static DefaultData getDataManual() {
 		DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
         data.add("34", "male", "81667");
@@ -37,6 +39,12 @@ public class KAnonymityExample {
         data.add("45", "male", "81931");
         return data;
 	}
+	
+	private static Data getDataCSV() throws IOException {
+		Data data = Data.create("data/test.csv", StandardCharsets.UTF_8, ';');
+        return data;
+	}
+	
 	private static void generalizeData(Data data) {
 		// Define hierarchies
         DefaultHierarchy age = Hierarchy.create();
