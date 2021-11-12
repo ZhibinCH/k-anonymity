@@ -37,23 +37,36 @@ public class KAnonymityExample {
     public static String inputHierarchyGender = "test_hierarchy_gender.csv";
     public static String inputHierarchyZipcode = "test_hierarchy_zipcode.csv";
     
-	public static void main(String[] args) throws Exception {
+    /**
+     * Entry point.
+     * 
+     * @param args the arguments
+     */
+    public static void main(String[] args) throws Exception {
 // 1. Load data
-//		DefaultData input = getDataManual(); // alternative 1.1
-		Data input = getDataCSV(); 			// alternative 1.2
+//		DefaultData input = getDataManual(); 		// step 1 alternative 1
+		Data input = getDataCSV(); 			 		// step 1 alternative 2
+		
 // 2. Generalization
-//	    generalizeDataManual(input); 		// alternative 2.1
-//		generalizeDataCSV(input); 			// alternative 2.2
-		generalizeDataBuilder(input); 		// alternative 2.3
+//	    generalizeDataManual(input); 		 		// step 2 alternative 1
+//		generalizeDataCSV(input); 			 		// step 2 alternative 2
+		generalizeDataBuilder(input); 		 		// step 2 alternative 3
+		
 // 3. Define privacy models and transformation rules
 // 4. Execute the anonymization algorithm
-		ARXResult result = runAnonymizer(input); // step 3 and 4
+		ARXResult result = runAnonymizer(input);	// step 3 and 4
+		
 // 5. Access and compare data
-		compareData(input,result); // step 5
 // 6. Analyze re-identification risks
+		compareData(input,result); 					// step 5 and 6
+		
 // 7. Store data	
-		storeResult(result);
+		storeResult(result); 						// step 7
 	}
+    
+    /**
+     * Get the input manually 
+     */
 	private static DefaultData getDataManual() {
 		DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
@@ -67,11 +80,18 @@ public class KAnonymityExample {
         return data;
 	}
 	
+	/**
+     * Get the input by using a .csv file
+     */
 	private static Data getDataCSV() throws IOException {
 		Data data = Data.create(dataDirectory+inputCSV, StandardCharsets.UTF_8, ';');
         return data;
 	}
 	
+	/**
+     * Generalize the input manually 
+     * @param data input
+     */
 	private static void generalizeDataManual(Data data) {
 		// Define hierarchies
         DefaultHierarchy age = Hierarchy.create();
@@ -96,12 +116,20 @@ public class KAnonymityExample {
         data.getDefinition().setAttributeType("zipcode", zipcode);	
 	}
 	
+	/**
+     * Generalize the input by using a .csv file
+     * @param data input
+     */
 	private static void generalizeDataCSV(Data data) throws IOException {
         data.getDefinition().setAttributeType("age", Hierarchy.create(dataDirectory+inputHierarchyAge, StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", Hierarchy.create(dataDirectory+inputHierarchyGender, StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("zipcode", Hierarchy.create(dataDirectory+inputHierarchyZipcode, StandardCharsets.UTF_8, ';'));
 	}
 	
+	/**
+     * Generalize the input using builders
+     * @param data input
+     */
 	private static void generalizeDataBuilder(Data data) {
 		// Define hierarchies
         HierarchyBuilderRedactionBased<?> builder1 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
@@ -118,6 +146,10 @@ public class KAnonymityExample {
         data.getDefinition().setAttributeType("zipcode", builder2);
 	}
 	
+	/**
+     * Run anonymization algorithm with selected privacy models
+     * @param data input
+     */
 	private static ARXResult runAnonymizer (Data data) throws IOException {
 		// Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -128,6 +160,11 @@ public class KAnonymityExample {
         return result;
 	}
 	
+	/**
+     * Access the data in its original form and in a transformed representation
+     * @param data input
+     * @param result output
+     */
 	private static void compareData (Data data, ARXResult result) {
 		 System.out.println("\n - Input data");
 	     Helper.print(data.getHandle());
@@ -177,6 +214,10 @@ public class KAnonymityExample {
         System.out.println("     + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
     }
 	
+    /**
+     * Print out some messages
+     * @param result output
+     */
 	private static void storeResult(ARXResult result) throws IOException {
 		System.out.print("\n - Writing data...");
         result.getOutput(false).save(dataDirectory+outputCSV, ';');
