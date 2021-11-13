@@ -1,5 +1,5 @@
 # k-anonymity
-
+The aim of [k-anonymity](https://en.wikipedia.org/wiki/K-anonymity) is to protect datasets from re-identification. A dataset is k-anonymous if each record cannot be distinguished from at least k-1 other records. [ARX](https://arx.deidentifier.org) is an open source tool for anonymizing structured (i.e. tabular) sensitive personal data. It supports a wide variety of (1) privacy and risk models, (2) methods for transforming data and (3) methods for analyzing the usefulness of output data. This demo provides a brief overview of running k-anonymity as the selected privacy model via ARX [API](https://arx.deidentifier.org/development/api/).
 
 ## Development environment
 The main development of example is carried out using Eclipse (v 4.19.0) as an IDE. Please import this project as a “Maven project”. A `pom.xml` file for Maven is already provided, which declares all necessary dependencies, including
