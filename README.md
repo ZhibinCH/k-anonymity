@@ -34,5 +34,30 @@ Similar to step 1, we can define the generalization hierarchy manually or by loa
 The k-Anonymity privacy model is selected and some releted fields in configuration can be specified by user, e.g. we can specify the suppression limit which allows for a certain threshold  (in percentage) of outliers.
 4. Executing the anonymization algorithm
 5. Accessing and comparing data
+The input and output are printed out in order to compare them easily. Intuitively, if more attributes are available, the risk of a person gets reidentified is higher. Based on [[1]](#1), we can use disction and separation to qualify quasi-identifiers of input, which can in combination be used for re-identification attacks.<br/>
+(1) An &alpha; - distinct quasi-identifier is a subset of attributes which becomes a key in the table remaining after the removal of at most a 1 − &alpha; fraction of tuples in the original table.<br/>
+(2) A subset of attributes separates a pair of tuples x and y if x and y have different values on at least one attribute in the subset. An &alpha;-separation quasi-identifier is a subset of attributes which separates at least a α fraction of all possible tuple pairs.<br/>
+<div align="center">
+
+| | age | sex | state|
+|------ | ------ | ------ | ------ |
+|1|20|f|CA|
+|2|30|f|CA|
+|3|40|f|TX|
+|4|20|m|NY|
+|5|40|m|CA|
+
+</div>
+
+The above table has 3 attributes. The attribute _age_ is a 0.6-distinct quasi-identifier because it has 3 distinct values in a total of 5 tuples; it is a 0.8-separation quasi-identifier because there are 10 distinct pairs of tuples (select 2 tuples out of 5 tuples, there are 10 possible cominations) and 8 pairs can be separated by _age_.
+
+
+
 6. Analyzing re-identification risks
 7. Writing data
+
+## References
+<a id="1">[1]</a> 
+Motwani, R., & Xu, Y. (2007, September). Efficient algorithms for masking and finding quasi-identifiers. In Proceedings of the Conference on Very Large Data Bases (VLDB) (pp. 83-93).<br/>
+<a id="2">[2]</a>
+Sweeney, L. (2002). k-anonymity: A model for protecting privacy. International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems, 10(05), 557-570.<br/>
