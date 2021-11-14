@@ -1,3 +1,7 @@
+/*
+ * This example This example provides a brief overview of running k-anonymity as the selected privacy model via ARX API. 
+ * Furthermore, this example including data is implemented based on and inspired by materials on the ARX Github repository (https://github.com/arx-deidentifier/arx).
+ */
 package challenge;
 
 
