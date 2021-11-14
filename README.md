@@ -11,6 +11,11 @@ Directory: `src/main/java/challenge/`
 Helper.java
 KAnonymityExample.java
 ```
+Test directory: `src/test/java/challenge/`
+```
+TestKAnonymityExample.java
+```
+
 ## Data files
 Directory: `data/`
 ```
