@@ -45,7 +45,7 @@ public class KAnonymityExample {
     public static void main(String[] args) throws Exception {
 // 1. Load data
 //		DefaultData input = getDataManual(); 		// step 1 alternative 1
-		Data input = getDataCSV(); 			 		// step 1 alternative 2
+		Data input = getDataCSV(dataDirectory+inputCSV); 			 		// step 1 alternative 2
 		
 // 2. Generalization
 //	    generalizeDataManual(input); 		 		// step 2 alternative 1
@@ -67,7 +67,7 @@ public class KAnonymityExample {
     /**
      * Get the input manually 
      */
-	private static DefaultData getDataManual() {
+	protected static DefaultData getDataManual() {
 		DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
         data.add("34", "male", "81667");
@@ -83,8 +83,8 @@ public class KAnonymityExample {
 	/**
      * Get the input by using a .csv file
      */
-	private static Data getDataCSV() throws IOException {
-		Data data = Data.create(dataDirectory+inputCSV, StandardCharsets.UTF_8, ';');
+	protected static Data getDataCSV(String path) throws IOException {
+		Data data = Data.create(path, StandardCharsets.UTF_8, ';');
         return data;
 	}
 	
@@ -92,7 +92,7 @@ public class KAnonymityExample {
      * Generalize the input manually 
      * @param data input
      */
-	private static void generalizeDataManual(Data data) {
+	protected static void generalizeDataManual(Data data) {
 		// Define hierarchies
         DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
@@ -120,7 +120,7 @@ public class KAnonymityExample {
      * Generalize the input by using a .csv file
      * @param data input
      */
-	private static void generalizeDataCSV(Data data) throws IOException {
+	protected static void generalizeDataCSV(Data data) throws IOException {
         data.getDefinition().setAttributeType("age", Hierarchy.create(dataDirectory+inputHierarchyAge, StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", Hierarchy.create(dataDirectory+inputHierarchyGender, StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("zipcode", Hierarchy.create(dataDirectory+inputHierarchyZipcode, StandardCharsets.UTF_8, ';'));
@@ -130,7 +130,7 @@ public class KAnonymityExample {
      * Generalize the input using builders
      * @param data input
      */
-	private static void generalizeDataBuilder(Data data) {
+	protected static void generalizeDataBuilder(Data data) {
 		// Define hierarchies
         HierarchyBuilderRedactionBased<?> builder1 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
                                                                                            Order.RIGHT_TO_LEFT,
@@ -150,11 +150,11 @@ public class KAnonymityExample {
      * Run anonymization algorithm with selected privacy models
      * @param data input
      */
-	private static ARXResult runAnonymizer (Data data) throws IOException {
+	protected static ARXResult runAnonymizer (Data data) throws IOException {
 		// Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(3));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setSuppressionLimit(0d);
         ARXResult result = anonymizer.anonymize(data, config);
         return result;
@@ -165,7 +165,7 @@ public class KAnonymityExample {
      * @param data input
      * @param result output
      */
-	private static void compareData (Data data, ARXResult result) {
+	protected static void compareData (Data data, ARXResult result) {
 		 System.out.println("\n - Input data");
 	     Helper.print(data.getHandle());
 	     System.out.println("\n - Quasi-identifiers sorted by risk:");
@@ -180,7 +180,7 @@ public class KAnonymityExample {
      * Perform risk analysis for input
      * @param handle
      */
-    private static void analyzeAttributes(DataHandle handle) {
+	protected static void analyzeAttributes(DataHandle handle) {
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
         RiskModelAttributes riskmodel = builder.getAttributeRisks();
@@ -193,7 +193,7 @@ public class KAnonymityExample {
      * Perform risk estimate for result
      * @param handle
      */
-    private static void analyzeResult(DataHandle handle) {
+	protected static void analyzeResult(DataHandle handle) {
         
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
@@ -218,7 +218,7 @@ public class KAnonymityExample {
      * Print out some messages
      * @param result output
      */
-	private static void storeResult(ARXResult result) throws IOException {
+	protected static void storeResult(ARXResult result) throws IOException {
 		System.out.print("\n - Writing data...");
         result.getOutput(false).save(dataDirectory+outputCSV, ';');
         System.out.println("Done!");
