@@ -27,7 +27,7 @@ test_hierarchy_age.csv
 test_hierarchy_gender.csv
 test_hierarchy_zipcode.csv
 ```
-The above files are originally from [here](https://github.com/arx-deidentifier/arx/tree/master/data). To note, an output .csv file will be saved in this directory `data`, please make sure path is authorized.
+The above files are originally from [here](https://github.com/arx-deidentifier/arx/tree/master/data). To note, an output .csv file will be saved in this directory `data`, please make sure this path is authorized.
 ## Library
 Directory: `src/main/resources`
 ```
