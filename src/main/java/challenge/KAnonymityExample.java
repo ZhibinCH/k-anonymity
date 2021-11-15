@@ -210,9 +210,9 @@ public class KAnonymityExample {
         System.out.println("   * Sample-based measures");
         System.out.println("     + Average risk     : " + sampleReidentifiationRisk.getAverageRisk());
         System.out.println("     + Lowest risk      : " + sampleReidentifiationRisk.getLowestRisk());
-        System.out.println("     + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByLowestRisk());
+        System.out.println("     + Tuples affected by the lowest risk  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByLowestRisk());
         System.out.println("     + Highest risk     : " + sampleReidentifiationRisk.getHighestRisk());
-        System.out.println("     + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByHighestRisk());
+        System.out.println("     + Tuples affected by the highest risk: " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByHighestRisk());
         System.out.println("     + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueRecords());
         System.out.println("   * Population-based measures");
         System.out.println("     + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
