@@ -48,24 +48,24 @@ public class KAnonymityExample {
      */
     public static void main(String[] args) throws Exception {
 // 1. Load data
-//		DefaultData input = getDataManual(); 		// step 1 alternative 1
+//		DefaultData input = getDataManual(); 							    // step 1 alternative 1
 		Data input = getDataCSV(dataDirectory+inputCSV); 			 		// step 1 alternative 2
 		
 // 2. Generalization
-//	    generalizeDataManual(input); 		 		// step 2 alternative 1
-//		generalizeDataCSV(input); 			 		// step 2 alternative 2
-		generalizeDataBuilder(input); 		 		// step 2 alternative 3
+//	    generalizeDataManual(input); 		 		        // step 2 alternative 1
+//		generalizeDataCSV(input); 			 		        // step 2 alternative 2
+		generalizeDataBuilder(input); 		 		        // step 2 alternative 3
 		
 // 3. Define privacy models and transformation rules
 // 4. Execute the anonymization algorithm
-		ARXResult result = runAnonymizer(input);	// step 3 and 4
+		ARXResult result = runAnonymizer(input);	        // step 3 and 4
 		
 // 5. Access and compare data
 // 6. Analyze re-identification risks
-		compareData(input,result); 					// step 5 and 6
+		compareData(input,result); 					        // step 5 and 6
 		
 // 7. Store data	
-		storeResult(result); 						// step 7
+		storeResult(result); 						        // step 7
 	}
     
     /**
